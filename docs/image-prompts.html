@@ -72,19 +72,19 @@ const MAIN = [
     must:["חזה גברי חשוף, מבט מלפנים, פנים חתוכות מעל הסנטר","גינקומסטיה <b>בולטת ובלתי־שגרתית</b> בשני הצדדים: הרקמה בולטת מקו החזה ונראית כהגדלה של בלוטת חלב, לא רק שריר מפותח","מראה אמיתי: עור עם מרקם, ללא קווי מתאר מצוירים"],
     prompt:"Photograph of an adult man's bare upper torso, front view, face cropped out above the chin for privacy. Pronounced bilateral gynecomastia: clearly enlarged, soft breast tissue on both sides that protrudes beyond the normal chest contour, with fuller glandular tissue under both nipples, clearly different from a muscular chest. Examination room with a medical couch softly blurred in the background.",
     wiki:"gynecomastia" },
-  { n:2, file:"gh-face.jpg", title:"תחנה 2 · אקרומגליה", sub:"פנים של אקרומגליה לצד תמונת דרכון ישנה",
+  { n:3, file:"gh-face.jpg", title:"תחנה 3 · אקרומגליה", sub:"פנים של אקרומגליה לצד תמונת דרכון ישנה",
     must:["אותו אדם בשתי תמונות: ישנה (תווים עדינים) ועכשווית","בתמונה העכשווית: מצח בולט, לסת תחתונה בולטת, אף רחב, שפתיים עבות","מבע ניטרלי, מראה צילום אמיתי"],
     prompt:"Side-by-side photographic diptych of the same middle-aged man. Left: a small, slightly faded passport-style photo from ten years ago with normal, refined facial features. Right: a current clinic photo of the same man showing acromegaly, prominent brow ridge, enlarged protruding lower jaw, broad nose and thick lips, coarse skin. Neutral expression, plain clinic wall background.",
     wiki:"acromegaly face" },
-  { n:3, file:"hash-eyelids.jpg", title:"תחנה 3 · השימוטו", sub:"פנים נפוחות עם בצקת בעפעפיים",
+  { n:2, file:"hash-eyelids.jpg", title:"תחנה 2 · השימוטו", sub:"פנים נפוחות עם בצקת בעפעפיים",
     must:["אישה צעירה, מבע עייף","נפיחות בולטת בעפעפיים (בצקת סביב העיניים)","עור חיוור ויבש, פנים נפוחות קלות"],
     prompt:"Close portrait photograph of a young woman with hypothyroidism: puffy swollen eyelids with visible periorbital edema, pale dry skin, mildly swollen face, tired flat expression. Soft window light in a doctor's office.",
     wiki:"hypothyroidism periorbital edema" },
-  { n:4, file:"graves-eyes.jpg", title:"תחנה 4 · גרייבס", sub:"עיניים בולטות וצוואר נפוח",
+  { n:5, file:"graves-eyes.jpg", title:"תחנה 5 · גרייבס", sub:"עיניים בולטות וצוואר נפוח",
     must:["אישה צעירה עם עיניים בולטות משני הצדדים (לבן העין נראה מעל הקשתית)","מבט 'מופתע', עפעפיים מורמים","צוואר מעט נפוח (זפק מפושט), עדיף בתמונה רחבה יותר שכוללת צוואר"],
     prompt:"Close photograph of a young woman's face and neck with Graves disease: bilateral exophthalmos (protruding eyes) with visible white sclera above the iris, retracted upper eyelids giving a startled stare, and a mildly enlarged diffuse goiter visible at the front of the neck. Soft clinic lighting.",
     wiki:"Graves disease exophthalmos goiter" },
-  { n:5, file:"cush-face.jpg", title:"תחנה 5 · קושינג", sub:"פנים עגולות סמוקות ('ירח מלא')",
+  { n:4, file:"cush-face.jpg", title:"תחנה 4 · קושינג", sub:"פנים עגולות סמוקות ('ירח מלא')",
     must:["אישה בגיל העמידה, פנים עגולות וסמוקות","אקנה ושערות קלות מעל השפה העליונה","עורף שמן (עדיף בהטיית ראש קלה לצד)"],
     prompt:"Portrait photograph of a middle-aged woman with Cushing syndrome: round plethoric 'moon face' with flushed cheeks, facial acne, fine facial hair above the upper lip, and a fat pad at the back of the neck visible in a slight three-quarter side view. Soft clinic lighting.",
     wiki:"Cushing syndrome moon face" },
@@ -134,7 +134,7 @@ function card(p){
     ${p.wiki ? `<div class="note" style="margin-top:10px">חלופה לתמונה אמיתית: חיפוש ב־Wikimedia Commons: <span class="file">${p.wiki}</span></div>` : ""}
   </div>`;
 }
-document.getElementById("main").innerHTML = MAIN.map(card).join("");
+document.getElementById("main").innerHTML = MAIN.slice().sort((a,b)=>String(a.n).localeCompare(String(b.n))).map(card).join("");
 document.getElementById("opt").innerHTML = OPT.map(card).join("");
 
 document.addEventListener("click", async (e) => {
