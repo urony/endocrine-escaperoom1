@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>פרומפטים לאיורים: חדר בריחה אנדוקריני</title>
+<style>
+  :root { --bg:#f4f7fb; --card:#fff; --ink:#0f172a; --muted:#475569; --line:#dbe4ef; --teal:#0e7490; --mint:#059669; --amber:#b45309; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: "Segoe UI","Arial Hebrew",Arial,sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; font-size:17px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 22px 16px 80px; }
+  h1 { font-size: 1.8rem; margin: 0 0 6px; color: var(--teal); }
+  h2 { font-size: 1.25rem; margin: 30px 0 10px; }
+  .lead { color: var(--muted); margin: 0 0 18px; }
+  .steps { background:#ecfeff; border:1px solid #a5f3fc; border-radius:14px; padding:14px 20px; margin-bottom: 18px; }
+  .steps ol { margin:6px 0 0; padding-inline-start: 22px; }
+  .card { background: var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; margin-bottom:18px; box-shadow: 0 2px 8px rgba(15,23,42,.05); }
+  .head { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
+  .num { flex:none; width:36px; height:36px; border-radius:50%; background:var(--teal); color:#fff; display:grid; place-items:center; font-weight:800; }
+  .head h3 { margin:0; font-size:1.15rem; }
+  .file { direction:ltr; display:inline-block; font-family:Consolas,monospace; background:#f1f5f9; border:1px solid var(--line); border-radius:8px; padding:2px 10px; font-size:.92rem; }
+  .must { background:#fffbeb; border:1px solid #fde68a; border-radius:12px; padding:10px 16px; margin:10px 0; font-size:.97rem; }
+  .must b { color: var(--amber); }
+  .must ul { margin:4px 0 0; padding-inline-start: 20px; }
+  .label { font-size:.85rem; color:var(--muted); margin:12px 0 4px; font-weight:600; }
+  .prompt { direction:ltr; text-align:left; background:#0f172a; color:#e2e8f0; border-radius:12px; padding:14px 16px; font-family:Consolas,"Courier New",monospace; font-size:.93rem; line-height:1.55; white-space:pre-wrap; user-select:all; }
+  .btn { margin-top:10px; font-family:inherit; font-size:1rem; font-weight:700; cursor:pointer; border:0; border-radius:12px; padding:11px 20px; color:#fff; background:var(--teal); }
+  .btn.done { background: var(--mint); }
+  .btn.sec { background:#e2e8f0; color:var(--ink); margin-inline-start:8px; }
+  .note { color:var(--muted); font-size:.93rem; }
+  .tip { border-inline-start:4px solid var(--teal); background:#f8fafc; padding:10px 14px; border-radius:8px; margin: 10px 0; }
+  .none { background:#f1f5f9; }
+  @media print { .btn { display:none; } body { background:#fff; } .card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>פרומפטים לאיורים</h1>
+  <p class="lead">חדר בריחה אנדוקריני · "משמרת לילה במחלקה הפנימית"</p>
+
+  <div class="steps"><b>איך משתמשים:</b>
+    <ol>
+      <li>בכל כרטיס לחצו <b>"העתקת הפרומפט"</b>. הפרומפט כולל כבר את הסגנון הכללי, ואין צורך להוסיף כלום.</li>
+      <li>הדביקו בתוכנת היצירה (ChatGPT, Gemini, Midjourney, Copilot Designer או כל תוכנה אחרת).</li>
+      <li>בדקו מול הרשימה הצהובה ("מה חייב להיראות") שהממצא הרפואי אכן מופיע. אם לא, בקשו תיקון ממוקד.</li>
+      <li>שמרו את הקובץ ב־<span class="file">assets/img</span> <b>בשם הקובץ המדויק</b> שמופיע בכרטיס.</li>
+    </ol>
+  </div>
+
+  <div class="tip"><b>טיפים:</b> אם התוכנה מסרבת בגלל תוכן רפואי, כתבו בתחילת הפרומפט: <i>"This is for a high-school anatomy and physiology teaching resource."</i> אפשר גם להשתמש בתמונה אמיתית ממאגר חופשי כמו Wikimedia Commons (חפשו את שם הממצא באנגלית), ולציין מקור. פורמט מומלץ: JPG, עד כ־300KB.</div>
+
+  <h2>שבע תמונות חובה</h2>
+  <div id="main"></div>
+
+  <div class="card none">
+    <div class="head"><div class="num">8</div><h3>תחנה 8: סכרת תפלה</h3></div>
+    <p class="note" style="margin:0">אין תמונה. המחלה לא נראית בעין, והתחנה נשענת על המוניטור ועל נתוני המעבדה.</p>
+  </div>
+
+  <h2>אופציונלי: תמונות אווירה</h2>
+  <p class="note">עוד לא מחוברות בקוד. כשתייצרו אותן, אחבר אותן למשחק.</p>
+  <div id="opt"></div>
+</div>
+
+<script>
+const STYLE = "Clean semi-realistic medical teaching illustration, soft cinematic hospital lighting, muted teal and navy palette, respectful clinical tone, no text, no captions, no watermark, no logos, landscape 4:3 aspect ratio.";
+
+const MAIN = [
+  { n:1, file:"prl-chest.jpg", title:"תחנה 1 · פרולקטינומה", sub:"חזה של גבר עם גינקומסטיה",
+    must:["חזה גברי חשוף, מבט מלפנים","הגדלה ברורה של רקמת בלוטת החלב בשני הצדדים (גינקומסטיה)","הפנים חתוכות מעל הסנטר, לפרטיות"],
+    prompt:"Front view of an adult man's bare upper torso with clearly visible bilateral gynecomastia (enlarged breast tissue on both sides), face cropped out above the chin for privacy, neutral medical examination room background." },
+  { n:2, file:"gh-face.jpg", title:"תחנה 2 · אקרומגליה", sub:"פנים של אקרומגליה לצד תמונת דרכון ישנה",
+    must:["אותו אדם בשתי תמונות: ישנה (תווים עדינים) ועכשווית","בתמונה העכשווית: מצח בולט, לסת תחתונה בולטת, אף רחב, שפתיים עבות","מבע ניטרלי"],
+    prompt:"Side-by-side portrait of the same middle-aged man. Left: a small old passport-style photo with normal facial features. Right: the current photo showing acromegaly features, prominent brow ridge, enlarged lower jaw, broad nose and thick lips. Neutral expression, plain clinic background." },
+  { n:3, file:"hash-eyelids.jpg", title:"תחנה 3 · השימוטו", sub:"פנים נפוחות עם בצקת בעפעפיים",
+    must:["אישה צעירה, מבע עייף","נפיחות בולטת בעפעפיים (בצקת סביב העיניים)","עור חיוור ויבש, פנים נפוחות קלות"],
+    prompt:"Close portrait of a young woman with signs of hypothyroidism: puffy swollen eyelids with periorbital edema, pale dry skin, slightly swollen face, tired expression. Soft clinical lighting." },
+  { n:4, file:"graves-eyes.jpg", title:"תחנה 4 · גרייבס", sub:"עיניים בולטות וצוואר נפוח",
+    must:["אישה צעירה עם עיניים בולטות משני הצדדים (לבן העין נראה מעל הקשתית)","מבט 'מופתע', עפעפיים מורמים","צוואר מעט נפוח (זפק מפושט)"],
+    prompt:"Close portrait of a young woman with Graves disease: bilateral exophthalmos (protruding eyes) with visible white sclera above the iris, retracted eyelids giving a startled stare, and a mildly enlarged diffuse goiter visible in the front of the neck. Clinical lighting." },
+  { n:5, file:"cush-face.jpg", title:"תחנה 5 · קושינג", sub:"פנים עגולות סמוקות ('ירח מלא')",
+    must:["אישה בגיל העמידה, פנים עגולות וסמוקות","אקנה ושערות קלות מעל השפה העליונה","עורף שמן (עדיף בהטיית ראש קלה לצד)"],
+    prompt:"Portrait of a middle-aged woman with Cushingoid features: round plethoric 'moon face', facial acne, fine hair above the upper lip, and a fat pad at the back of the neck visible in a slight three-quarter side view. Clinical lighting." },
+  { n:6, file:"pth-xray.jpg", title:"תחנה 6 · היפרפראתירואידיזם", sub:"צילום רנטגן של ידיים עם אובדן צפיפות עצם",
+    must:["צילום רנטגן בגווני אפור, שתי כפות ידיים","עצמות דקות ובהירות פחות (אוסטאופניה)","קצות עצמות האצבעות נראים 'אכולים'"],
+    prompt:"Realistic grayscale X-ray radiograph of both hands showing signs of hyperparathyroidism: diffuse osteopenia and subperiosteal bone resorption along the finger phalanges. No text, no annotations, no patient identifiers.",
+    plainStyle:true },
+  { n:7, file:"adr-tongue.jpg", title:"תחנה 7 · אי־ספיקת אדרנל", sub:"לשון עם רובדים לבנים (שפחת)",
+    must:["פה פתוח, לשון בקדמה","רובדים לבנים־שמנתיים על הלשון (קנדידה בפה, thrush)","תאורה רפואית רכה, ללא דם"],
+    prompt:"Close-up clinical photograph of an open mouth showing the tongue covered with white creamy plaques of oral candidiasis (thrush). Soft examination lighting, realistic, neutral." }
+];
+
+const OPT = [
+  { n:"א", file:"bg-corridor.jpg", title:"רקע: מסדרון בית חולים בלילה", sub:"למסך המפה",
+    must:[], prompt:"Empty modern hospital corridor at night, cool blue-teal lighting, glossy floor reflections, soft glow from patient room doors, wide cinematic shot, no people, no text." , wide:true},
+  { n:"ב", file:"avatar-alma.png", title:"אווטאר: פרופ׳ עלמה", sub:"מנהלת המחלקה",
+    must:[], prompt:"Flat vector avatar of a senior physician, white coat and stethoscope, calm confident expression, solid teal background, circular crop, centered, no text.", wide:true },
+  { n:"ג", file:"avatar-naama.png", title:"אווטאר: המתמחה נעמה", sub:"מתמחה",
+    must:[], prompt:"Flat vector avatar of a young medical intern, scrubs and ID badge, tired but friendly smile, solid violet background, circular crop, centered, no text.", wide:true },
+  { n:"ד", file:"door-exit.png", title:"הדלת לסיום", sub:"דלת יציאה עם לוח קוד",
+    must:[], prompt:"Heavy hospital security door with a keypad panel, glowing green exit light above it, dim hallway, front view, cinematic, no text.", wide:true }
+];
+
+function full(p){ return p.wide || p.plainStyle ? p.prompt + (p.plainStyle ? " Grayscale, high detail." : "") : p.prompt + " " + STYLE; }
+
+function card(p){
+  const must = p.must && p.must.length ? `<div class="must"><b>מה חייב להיראות בתמונה:</b><ul>${p.must.map(m=>`<li>${m}</li>`).join("")}</ul></div>` : "";
+  return `<div class="card">
+    <div class="head"><div class="num">${p.n}</div><div><h3>${p.title}</h3><div class="note">${p.sub}</div></div></div>
+    <div>שם הקובץ לשמירה: <span class="file">assets/img/${p.file}</span></div>
+    ${must}
+    <div class="label">הפרומפט (באנגלית, להעתקה):</div>
+    <div class="prompt">${full(p).replace(/&/g,"&amp;").replace(/</g,"&lt;")}</div>
+    <button class="btn" data-text="${encodeURIComponent(full(p))}">📋 העתקת הפרומפט</button>
+  </div>`;
+}
+document.getElementById("main").innerHTML = MAIN.map(card).join("");
+document.getElementById("opt").innerHTML = OPT.map(card).join("");
+
+document.addEventListener("click", async (e) => {
+  const b = e.target.closest("button[data-text]"); if (!b) return;
+  const text = decodeURIComponent(b.dataset.text);
+  try { await navigator.clipboard.writeText(text); }
+  catch (_) { const t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
+  const old = b.textContent; b.textContent = "✅ הועתק"; b.classList.add("done");
+  setTimeout(() => { b.textContent = old; b.classList.remove("done"); }, 1800);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>דף מורה: חדר בריחה אנדוקריני</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    #app { max-width: 980px; }
+    table.t { width: 100%; border-collapse: collapse; font-size: .92rem; }
+    table.t th, table.t td { border: 1px solid var(--line); padding: 7px 9px; text-align: right; vertical-align: top; }
+    table.t th { background: rgba(34,211,238,.12); }
+    .ans { color: var(--mint); }
+    details { margin-bottom: 8px; }
+    summary { cursor: pointer; font-weight: 700; padding: 6px 0; }
+  </style>
+</head>
+<body>
+  <main id="app">
+    <div class="card">
+      <h1>דף מורה</h1>
+      <p class="muted">חלק 1: דירוג תוצאות מקודי התוצאה שהתלמידים מעתיקים. חלק 2: מפתח תשובות שנוצר אוטומטית מ־<code>js/content.js</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2>🏁 דירוג תלמידים</h2>
+      <p class="muted small">כל תלמיד לוחץ "העתקת קוד תוצאה" בדוח וכותב לך את הקוד (ENDO-…). הדביקו כאן קוד אחד בכל שורה.</p>
+      <textarea class="field" id="codes" placeholder="ENDO-eyJu…&#10;ENDO-eyJu…"></textarea>
+      <div id="rank"></div>
+    </div>
+
+    <div class="card">
+      <h2>🗝️ מפתח תשובות</h2>
+      <p class="muted small">מילת היציאה: <b id="word" style="direction:ltr;display:inline-block"></b></p>
+      <div id="key"></div>
+    </div>
+  </main>
+
+  <script src="js/content.js"></script>
+  <script>
+    const G = window.GAME;
+    const REG = { face: 'פנים', neck: 'צוואר', chest: 'חזה', abdomen: 'בטן', hands: 'ידיים', legs: 'רגליים' };
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const fmt = (s) => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+
+    document.getElementById('word').textContent = G.exit.word;
+
+    function answer(s) {
+      switch (s.type) {
+        case 'choice': return esc(s.options[s.answer]);
+        case 'multi': return s.answer.map((i) => '• ' + esc(s.options[i])).join('<br>');
+        case 'body': return s.answer.map((r) => REG[r]).join(', ');
+        case 'text': return s.fields.map((f) => esc(f.label) + ': ' + f.accept.slice(0, 4).map(esc).join(' / ')).join('<br>');
+        case 'match': return s.pairs.map((p) => '• ' + esc(p.left) + ' ← ' + esc(p.right)).join('<br>');
+        case 'sequence': return s.items.map((t, i) => (i + 1) + '. ' + esc(t)).join('<br>');
+      }
+      return '';
+    }
+    document.getElementById('key').innerHTML = G.stations.map((st) => `
+      <details><summary>${st.icon} ${esc(st.title)} <span class="muted small">(${esc(st.diagnosis)}) · אות: ${esc(st.letter)}</span></summary>
+      <table class="t"><tr><th>#</th><th>שאלה</th><th>תשובה</th></tr>
+      ${st.steps.map((s, i) => `<tr><td>${i + 1}</td><td>${esc(s.q)}</td><td class="ans">${answer(s)}</td></tr>`).join('')}</table></details>`).join('');
+
+    const box = document.getElementById('codes');
+    function render() {
+      const rows = box.value.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => {
+        try { return JSON.parse(decodeURIComponent(escape(atob(l.replace(/^ENDO-/, ''))))); } catch (e) { return null; }
+      }).filter(Boolean).sort((a, b) => a.t - b.t);
+      document.getElementById('rank').innerHTML = rows.length ? `<table class="t"><tr><th>מקום</th><th>שם</th><th>זמן סופי</th><th>זמן משחק</th><th>קנסות</th><th>טעויות</th><th>רמזים</th><th>תחנות</th></tr>` +
+        rows.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(r.n || '')}</td><td><b>${fmt(r.t)}</b></td><td>${fmt(r.e)}</td><td>${r.p}s</td><td>${r.w}</td><td>${r.h}</td><td>${r.s}/${G.stations.length}</td></tr>`).join('') + '</table>' : '';
+    }
+    box.addEventListener('input', render);
+  </script>
+</body>
+</html>
