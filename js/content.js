@@ -15,6 +15,14 @@ window.GAME = {
     naama: { name: `נעמה`,        role: `מתמחה`,                initial: `נ`, color: `#a78bfa` }
   },
 
+  // רקעי תמונה (אופציונליים: אם הקובץ חסר, לא מוצג רקע)
+  backgrounds: {
+    hub: `assets/img/bg-corridor.jpg`,
+    clinic: `assets/img/bg-clinic.jpg`,
+    ward: `assets/img/bg-ward.jpg`,
+    surgery: `assets/img/bg-surgery.jpg`
+  },
+
   // קנסות בשניות
   penalties: { wrong: 15, hint: [20, 40, 60], door: 15 },
 
@@ -60,7 +68,7 @@ window.GAME = {
        1. פרולקטינומה
        ------------------------------------------------------------ */
     {
-      id: `prl`, room: `מרפאה, חדר 1`, icon: `🧠`, letter: `K`,
+      id: `prl`, bg: `clinic`, room: `מרפאה, חדר 1`, icon: `🧠`, letter: `K`,
       title: `המטופל שמתבייש`,
       patient: { tag: `א.י.`, line: `גבר, בן 38` },
       vitals: { hr: 74, bp: `128/82`, spo2: 98, temp: 36.7, flags: [] },
@@ -144,7 +152,7 @@ window.GAME = {
        2. אקרומגליה (הורמון גדילה)
        ------------------------------------------------------------ */
     {
-      id: `gh`, room: `מרפאה, חדר 2`, icon: `🖐️`, letter: `B`,
+      id: `gh`, bg: `clinic`, room: `מרפאה, חדר 2`, icon: `🖐️`, letter: `B`,
       title: `הטבעת שכבר לא נכנסת`,
       patient: { tag: `ד.ל.`, line: `גבר, בן 45` },
       vitals: { hr: 78, bp: `150/92`, spo2: 97, temp: 36.8, flags: [`bp`] },
@@ -211,7 +219,7 @@ window.GAME = {
        3. השימוטו
        ------------------------------------------------------------ */
     {
-      id: `hash`, room: `מרפאה, חדר 3`, icon: `🥶`, letter: `E`,
+      id: `hash`, bg: `clinic`, room: `מרפאה, חדר 3`, icon: `🥶`, letter: `E`,
       title: `זו שמבקשת לכבות את המזגן`,
       patient: { tag: `ש.א.`, line: `אישה, בת 20` },
       vitals: { hr: 45, bp: `105/70`, spo2: 98, temp: 36.0, flags: [`hr`, `temp`] },
@@ -277,7 +285,7 @@ window.GAME = {
        4. גרייבס
        ------------------------------------------------------------ */
     {
-      id: `graves`, room: `מרפאה, חדר 4`, icon: `💓`, letter: `F`,
+      id: `graves`, bg: `clinic`, room: `מרפאה, חדר 4`, icon: `💓`, letter: `F`,
       title: `הלב שלא נרגע`,
       patient: { tag: `נ.ר.`, line: `אישה, בת 29` },
       vitals: { hr: 118, bp: `142/68`, spo2: 99, temp: 37.4, flags: [`hr`, `bp`, `temp`] },
@@ -350,7 +358,7 @@ window.GAME = {
        5. קושינג
        ------------------------------------------------------------ */
     {
-      id: `cush`, room: `מרפאה, חדר 5`, icon: `🌕`, letter: `A`,
+      id: `cush`, bg: `clinic`, room: `מרפאה, חדר 5`, icon: `🌕`, letter: `A`,
       title: `הפנים העגולות והסמוקות`,
       patient: { tag: `ל.ש.`, line: `אישה, בת 53` },
       vitals: { hr: 86, bp: `168/98`, spo2: 97, temp: 36.8, flags: [`bp`] },
@@ -424,7 +432,7 @@ window.GAME = {
        6. היפרפראתירואידיזם
        ------------------------------------------------------------ */
     {
-      id: `pth`, room: `מחלקת נפרולוגיה`, icon: `🪨`, letter: `D`,
+      id: `pth`, bg: `ward`, room: `מחלקת נפרולוגיה`, icon: `🪨`, letter: `D`,
       title: `אבנים, עצמות, גניחות וגניחות נפש`,
       patient: { tag: `ת.פ.`, line: `אישה, בת 44` },
       vitals: { hr: 52, bp: `158/94`, spo2: 98, temp: 36.7, flags: [`hr`, `bp`] },
@@ -499,7 +507,7 @@ window.GAME = {
        7. אי־ספיקת אדרנל (אדיסון)
        ------------------------------------------------------------ */
     {
-      id: `adr`, room: `מחלקה כירורגית`, icon: `🧂`, letter: `C`,
+      id: `adr`, bg: `surgery`, room: `מחלקה כירורגית`, icon: `🧂`, letter: `C`,
       title: `זו שהפסיקה את הכדורים`,
       patient: { tag: `מ.א.`, line: `אישה, בת 41` },
       vitals: { hr: 96, bp: `88/54`, spo2: 98, temp: 36.6, flags: [`bp`, `hr`] },
@@ -581,7 +589,7 @@ window.GAME = {
        8. סכרת תפלה
        ------------------------------------------------------------ */
     {
-      id: `di`, room: `קומת הנוירוכירורגיה`, icon: `💧`, letter: `E`,
+      id: `di`, bg: `ward`, room: `קומת הנוירוכירורגיה`, icon: `💧`, letter: `E`,
       title: `עשרה ליטר ביום`,
       patient: { tag: `ר.ג.`, line: `גבר, בן 22` },
       vitals: { hr: 102, bp: `104/62`, spo2: 99, temp: 37.0, flags: [`hr`] },

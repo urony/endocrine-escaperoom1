@@ -109,6 +109,11 @@
   }
   requestAnimationFrame(ecgLoop);
 
+  const bannerStyle = (key) => {
+    const u = G.backgrounds && G.backgrounds[key];
+    return u ? ` style="background-image:linear-gradient(rgba(10,17,32,.45),rgba(10,17,32,.92)),url('${esc(u)}')" ` : '';
+  };
+
   /* ---------------- screens ---------------- */
   const app = $('#app');
   function render() {
@@ -140,7 +145,7 @@
   /* ----- hub ----- */
   function rHub() {
     const n = G.stations.length, d = S.done.length;
-    let h = `<div class="card"><div class="row between"><div><h2>קומה 3 · המחלקה הפנימית</h2>
+    let h = `<div class="card banner has-img"${bannerStyle('hub')}><div class="row between"><div><h2>קומה 3 · המחלקה הפנימית</h2>
       <div class="muted small">${d} מתוך ${n} תחנות הושלמו</div></div><div class="cards" style="margin:0">${G.stations.map((s) => `<span class="keyslot ${S.done.includes(s.id) ? 'have' : ''}">${S.done.includes(s.id) ? s.letter : '?'}</span>`).join('')}</div></div>
       <div class="progress"><i style="width:${d / n * 100}%"></i></div></div><div class="path">`;
     G.stations.forEach((s, k) => {
@@ -192,9 +197,9 @@
 
   function rStation() {
     const st = stById(S.cur), n = st.steps.length, p = S.progress[st.id] || 0;
-    let h = `<button class="btn ghost" data-act="back" style="margin-bottom:12px">▸ חזרה למפה</button>
-      <div class="shead"><div class="big">${st.icon}</div><div><h2 style="margin:0">${esc(st.title)}</h2>
-      <div class="muted small">${esc(st.room)}</div></div></div>
+    let h = `<div class="banner has-img"${bannerStyle(st.bg)}><button class="btn ghost back" data-act="back" style="align-self:flex-start">▸ חזרה למפה</button>
+      <div class="shead" style="margin:0"><div class="big">${st.icon}</div><div><h2 style="margin:0">${esc(st.title)}</h2>
+      <div class="muted small">${esc(st.room)}</div></div></div></div>
       <div class="patient-chip">🪪 ${esc(st.patient.tag)} · ${esc(st.patient.line)}</div><div style="height:12px"></div>`;
     h += monitorHTML(st.vitals);
     h += st.story.map(bubbleHTML).join('');

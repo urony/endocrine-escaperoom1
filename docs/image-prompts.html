@@ -47,6 +47,7 @@
     </ol>
   </div>
 
+  <div class="tip"><b>סגנון:</b> כל הפרומפטים מבקשים <b>צילום ריאליסטי</b> ולא איור, כדי שהמשחק ירגיש כמו בית חולים אמיתי. אם התוצאה עדיין נראית מצוירת, הוסיפו בסוף: <i>"Raw photo, unretouched, looks like a real medical photograph."</i> בדקו תמיד שהממצא הרפואי באמת נראה, כי מודלי תמונה נוטים לרכך ממצאים.</div>
   <div class="tip"><b>טיפים:</b> אם התוכנה מסרבת בגלל תוכן רפואי, כתבו בתחילת הפרומפט: <i>"This is for a high-school anatomy and physiology teaching resource."</i> אפשר גם להשתמש בתמונה אמיתית ממאגר חופשי כמו Wikimedia Commons (חפשו את שם הממצא באנגלית), ולציין מקור. פורמט מומלץ: JPG, עד כ־300KB.</div>
 
   <h2>שבע תמונות חובה</h2>
@@ -57,51 +58,65 @@
     <p class="note" style="margin:0">אין תמונה. המחלה לא נראית בעין, והתחנה נשענת על המוניטור ועל נתוני המעבדה.</p>
   </div>
 
-  <h2>אופציונלי: תמונות אווירה</h2>
-  <p class="note">עוד לא מחוברות בקוד. כשתייצרו אותן, אחבר אותן למשחק.</p>
+  <h2>ארבע תמונות רקע: תחושה של בית חולים אמיתי</h2>
+  <p class="note">מחוברות למשחק כרקע של כותרת המפה ושל כל תחנה (עם כהות עדינה מעליהן, כדי שהטקסט יישאר קריא). אם תמונה חסרה, פשוט לא מוצג רקע. רצוי אחרי שמסיימים את שבע התמונות הראשונות.</p>
   <div id="opt"></div>
 </div>
 
 <script>
-const STYLE = "Clean semi-realistic medical teaching illustration, soft cinematic hospital lighting, muted teal and navy palette, respectful clinical tone, no text, no captions, no watermark, no logos, landscape 4:3 aspect ratio.";
+const STYLE = "Photorealistic documentary-style clinical photograph, shot on a full-frame DSLR with a 50mm lens, natural skin texture with pores and imperfections, soft natural hospital lighting, shallow depth of field. It must look like a real photograph, NOT an illustration, NOT a cartoon, NOT a digital painting, NOT a 3D render. No text, no captions, no watermark, no logos, landscape 4:3 aspect ratio.";
+const STYLE_BG = "Photorealistic architectural photograph of a real Israeli hospital interior, shot on a full-frame DSLR, natural fluorescent and window lighting, slightly cool teal tones, sharp and clean, wide landscape 16:9 aspect ratio, calm uncluttered composition. It must look like a real photograph, NOT an illustration, NOT a render. No people, no readable text, no watermark, no logos.";
 
 const MAIN = [
   { n:1, file:"prl-chest.jpg", title:"תחנה 1 · פרולקטינומה", sub:"חזה של גבר עם גינקומסטיה",
-    must:["חזה גברי חשוף, מבט מלפנים","הגדלה ברורה של רקמת בלוטת החלב בשני הצדדים (גינקומסטיה)","הפנים חתוכות מעל הסנטר, לפרטיות"],
-    prompt:"Front view of an adult man's bare upper torso with clearly visible bilateral gynecomastia (enlarged breast tissue on both sides), face cropped out above the chin for privacy, neutral medical examination room background." },
+    must:["חזה גברי חשוף, מבט מלפנים, פנים חתוכות מעל הסנטר","גינקומסטיה <b>בולטת ובלתי־שגרתית</b> בשני הצדדים: הרקמה בולטת מקו החזה ונראית כהגדלה של בלוטת חלב, לא רק שריר מפותח","מראה אמיתי: עור עם מרקם, ללא קווי מתאר מצוירים"],
+    prompt:"Photograph of an adult man's bare upper torso, front view, face cropped out above the chin for privacy. Pronounced bilateral gynecomastia: clearly enlarged, soft breast tissue on both sides that protrudes beyond the normal chest contour, with fuller glandular tissue under both nipples, clearly different from a muscular chest. Examination room with a medical couch softly blurred in the background.",
+    wiki:"gynecomastia" },
   { n:2, file:"gh-face.jpg", title:"תחנה 2 · אקרומגליה", sub:"פנים של אקרומגליה לצד תמונת דרכון ישנה",
-    must:["אותו אדם בשתי תמונות: ישנה (תווים עדינים) ועכשווית","בתמונה העכשווית: מצח בולט, לסת תחתונה בולטת, אף רחב, שפתיים עבות","מבע ניטרלי"],
-    prompt:"Side-by-side portrait of the same middle-aged man. Left: a small old passport-style photo with normal facial features. Right: the current photo showing acromegaly features, prominent brow ridge, enlarged lower jaw, broad nose and thick lips. Neutral expression, plain clinic background." },
+    must:["אותו אדם בשתי תמונות: ישנה (תווים עדינים) ועכשווית","בתמונה העכשווית: מצח בולט, לסת תחתונה בולטת, אף רחב, שפתיים עבות","מבע ניטרלי, מראה צילום אמיתי"],
+    prompt:"Side-by-side photographic diptych of the same middle-aged man. Left: a small, slightly faded passport-style photo from ten years ago with normal, refined facial features. Right: a current clinic photo of the same man showing acromegaly, prominent brow ridge, enlarged protruding lower jaw, broad nose and thick lips, coarse skin. Neutral expression, plain clinic wall background.",
+    wiki:"acromegaly face" },
   { n:3, file:"hash-eyelids.jpg", title:"תחנה 3 · השימוטו", sub:"פנים נפוחות עם בצקת בעפעפיים",
     must:["אישה צעירה, מבע עייף","נפיחות בולטת בעפעפיים (בצקת סביב העיניים)","עור חיוור ויבש, פנים נפוחות קלות"],
-    prompt:"Close portrait of a young woman with signs of hypothyroidism: puffy swollen eyelids with periorbital edema, pale dry skin, slightly swollen face, tired expression. Soft clinical lighting." },
+    prompt:"Close portrait photograph of a young woman with hypothyroidism: puffy swollen eyelids with visible periorbital edema, pale dry skin, mildly swollen face, tired flat expression. Soft window light in a doctor's office.",
+    wiki:"hypothyroidism periorbital edema" },
   { n:4, file:"graves-eyes.jpg", title:"תחנה 4 · גרייבס", sub:"עיניים בולטות וצוואר נפוח",
-    must:["אישה צעירה עם עיניים בולטות משני הצדדים (לבן העין נראה מעל הקשתית)","מבט 'מופתע', עפעפיים מורמים","צוואר מעט נפוח (זפק מפושט)"],
-    prompt:"Close portrait of a young woman with Graves disease: bilateral exophthalmos (protruding eyes) with visible white sclera above the iris, retracted eyelids giving a startled stare, and a mildly enlarged diffuse goiter visible in the front of the neck. Clinical lighting." },
+    must:["אישה צעירה עם עיניים בולטות משני הצדדים (לבן העין נראה מעל הקשתית)","מבט 'מופתע', עפעפיים מורמים","צוואר מעט נפוח (זפק מפושט), עדיף בתמונה רחבה יותר שכוללת צוואר"],
+    prompt:"Close photograph of a young woman's face and neck with Graves disease: bilateral exophthalmos (protruding eyes) with visible white sclera above the iris, retracted upper eyelids giving a startled stare, and a mildly enlarged diffuse goiter visible at the front of the neck. Soft clinic lighting.",
+    wiki:"Graves disease exophthalmos goiter" },
   { n:5, file:"cush-face.jpg", title:"תחנה 5 · קושינג", sub:"פנים עגולות סמוקות ('ירח מלא')",
     must:["אישה בגיל העמידה, פנים עגולות וסמוקות","אקנה ושערות קלות מעל השפה העליונה","עורף שמן (עדיף בהטיית ראש קלה לצד)"],
-    prompt:"Portrait of a middle-aged woman with Cushingoid features: round plethoric 'moon face', facial acne, fine hair above the upper lip, and a fat pad at the back of the neck visible in a slight three-quarter side view. Clinical lighting." },
+    prompt:"Portrait photograph of a middle-aged woman with Cushing syndrome: round plethoric 'moon face' with flushed cheeks, facial acne, fine facial hair above the upper lip, and a fat pad at the back of the neck visible in a slight three-quarter side view. Soft clinic lighting.",
+    wiki:"Cushing syndrome moon face" },
   { n:6, file:"pth-xray.jpg", title:"תחנה 6 · היפרפראתירואידיזם", sub:"צילום רנטגן של ידיים עם אובדן צפיפות עצם",
     must:["צילום רנטגן בגווני אפור, שתי כפות ידיים","עצמות דקות ובהירות פחות (אוסטאופניה)","קצות עצמות האצבעות נראים 'אכולים'"],
-    prompt:"Realistic grayscale X-ray radiograph of both hands showing signs of hyperparathyroidism: diffuse osteopenia and subperiosteal bone resorption along the finger phalanges. No text, no annotations, no patient identifiers.",
-    plainStyle:true },
+    prompt:"Realistic grayscale X-ray radiograph of both hands showing signs of hyperparathyroidism: diffuse osteopenia and subperiosteal bone resorption along the finger phalanges. Authentic radiology image quality. No text, no annotations, no patient identifiers.",
+    plainStyle:true, wiki:"hyperparathyroidism hand radiograph subperiosteal resorption" },
   { n:7, file:"adr-tongue.jpg", title:"תחנה 7 · אי־ספיקת אדרנל", sub:"לשון עם רובדים לבנים (שפחת)",
     must:["פה פתוח, לשון בקדמה","רובדים לבנים־שמנתיים על הלשון (קנדידה בפה, thrush)","תאורה רפואית רכה, ללא דם"],
-    prompt:"Close-up clinical photograph of an open mouth showing the tongue covered with white creamy plaques of oral candidiasis (thrush). Soft examination lighting, realistic, neutral." }
+    prompt:"Close-up clinical photograph of an open mouth showing the tongue covered with white creamy plaques of oral candidiasis (thrush). Soft examination lighting, realistic, neutral.",
+    wiki:"oral candidiasis thrush tongue" }
 ];
 
 const OPT = [
-  { n:"א", file:"bg-corridor.jpg", title:"רקע: מסדרון בית חולים בלילה", sub:"למסך המפה",
-    must:[], prompt:"Empty modern hospital corridor at night, cool blue-teal lighting, glossy floor reflections, soft glow from patient room doors, wide cinematic shot, no people, no text." , wide:true},
-  { n:"ב", file:"avatar-alma.png", title:"אווטאר: פרופ׳ עלמה", sub:"מנהלת המחלקה",
-    must:[], prompt:"Flat vector avatar of a senior physician, white coat and stethoscope, calm confident expression, solid teal background, circular crop, centered, no text.", wide:true },
-  { n:"ג", file:"avatar-naama.png", title:"אווטאר: המתמחה נעמה", sub:"מתמחה",
-    must:[], prompt:"Flat vector avatar of a young medical intern, scrubs and ID badge, tired but friendly smile, solid violet background, circular crop, centered, no text.", wide:true },
-  { n:"ד", file:"door-exit.png", title:"הדלת לסיום", sub:"דלת יציאה עם לוח קוד",
-    must:[], prompt:"Heavy hospital security door with a keypad panel, glowing green exit light above it, dim hallway, front view, cinematic, no text.", wide:true }
+  { n:"א", file:"bg-corridor.jpg", title:"רקע למסך המפה: מסדרון מחלקה", sub:"מחובר למשחק: רקע המפה",
+    must:["מסדרון ארוך ונקי עם דלתות חדרים, תאורה קרה","ללא אנשים וללא כיתוב קריא"],
+    prompt:"Long empty modern hospital corridor on an internal medicine ward at night, glossy floor reflecting ceiling lights, closed patient room doors on both sides, a nurses' station in the distance, cool teal tones.", bg:true },
+  { n:"ב", file:"bg-clinic.jpg", title:"רקע: חדר בדיקה במרפאה", sub:"מחובר למשחק: תחנות 1 עד 5",
+    must:["חדר בדיקה אמיתי: מיטת בדיקה, כיור, שולחן רופא, מחשב","ללא אנשים"],
+    prompt:"Interior of an outpatient endocrinology clinic examination room: padded examination couch with paper cover, doctor's desk with a computer monitor, small sink, wall-mounted otoscope, a window with daylight.", bg:true },
+  { n:"ג", file:"bg-ward.jpg", title:"רקע: מחלקה עם מיטות", sub:"מחובר למשחק: תחנות 6 ו־8",
+    must:["חדר מחלקה אמיתי עם מיטת אשפוז, מוניטור ועמוד עירוי","ללא אנשים"],
+    prompt:"Hospital ward room with an empty adjustable hospital bed, bedside patient monitor, IV pole with a drip bag, privacy curtain half drawn, medical gas panel on the wall behind the bed.", bg:true },
+  { n:"ד", file:"bg-surgery.jpg", title:"רקע: אזור כירורגי", sub:"מחובר למשחק: תחנה 7",
+    must:["מסדרון או חדר ניתוח אמיתי, ללא אנשים","תאורה כירורגית"],
+    prompt:"Clean surgical department pre-operative area, empty gurney against the wall, hand-scrub sinks visible, double doors leading to the operating theater with a small round window, bright cool lighting.", bg:true }
 ];
 
-function full(p){ return p.wide || p.plainStyle ? p.prompt + (p.plainStyle ? " Grayscale, high detail." : "") : p.prompt + " " + STYLE; }
+function full(p){
+  if (p.plainStyle) return p.prompt + " Grayscale, high detail.";
+  return p.prompt + " " + (p.bg ? STYLE_BG : STYLE);
+}
 
 function card(p){
   const must = p.must && p.must.length ? `<div class="must"><b>מה חייב להיראות בתמונה:</b><ul>${p.must.map(m=>`<li>${m}</li>`).join("")}</ul></div>` : "";
@@ -112,6 +127,7 @@ function card(p){
     <div class="label">הפרומפט (באנגלית, להעתקה):</div>
     <div class="prompt">${full(p).replace(/&/g,"&amp;").replace(/</g,"&lt;")}</div>
     <button class="btn" data-text="${encodeURIComponent(full(p))}">📋 העתקת הפרומפט</button>
+    ${p.wiki ? `<div class="note" style="margin-top:10px">חלופה לתמונה אמיתית: חיפוש ב־Wikimedia Commons: <span class="file">${p.wiki}</span></div>` : ""}
   </div>`;
 }
 document.getElementById("main").innerHTML = MAIN.map(card).join("");
