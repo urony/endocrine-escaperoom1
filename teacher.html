@@ -52,7 +52,7 @@
         case 'multi': return s.answer.map((i) => '• ' + esc(s.options[i])).join('<br>');
         case 'body': return s.answer.map((r) => REG[r]).join(', ');
         case 'text': return s.fields.map((f) => esc(f.label) + ': ' + f.accept.slice(0, 4).map(esc).join(' / ')).join('<br>');
-        case 'match': return s.pairs.map((p) => '• ' + esc(p.left) + ' ← ' + esc(p.right)).join('<br>');
+        case 'match': return s.pairs.map((p) => '• ' + esc(p.left) + ': ' + esc(p.right)).join('<br>');
         case 'sequence': return s.items.map((t, i) => (i + 1) + '. ' + esc(t)).join('<br>');
       }
       return '';

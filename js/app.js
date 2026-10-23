@@ -18,9 +18,10 @@
   const sameSet = (a, b) => a.length === b.length && a.every((x) => b.includes(x));
   const stById = (id) => G.stations.find((s) => s.id === id);
 
-  function matchText(input, accept) {
+  function matchText(input, accept, reject) {
     const v = norm(input);
     if (!v) return false;
+    if ((reject || []).some((r) => v.includes(norm(r)))) return false;
     return accept.some((a) => { const t = norm(a); return v === t || (t.length >= 4 && v.includes(t)); });
   }
 
@@ -173,6 +174,8 @@
     U.sel = []; U.wrong = []; U.tval = []; U.tok = []; U.mval = {}; U.mok = {}; U.seq = []; U.msg = '';
     if (!step) return;
     if (step.type === 'match') U.mopts = shuffle(step.choices);
+    // סדר התשובות מעורבב בכל פתיחה, כדי שמיקום התשובה הנכונה לא ילמד כלום (data-i נשאר האינדקס המקורי)
+    if (step.type === 'choice' || step.type === 'multi') U.perm = shuffle(step.options.map((_, k) => k));
     if (step.type === 'sequence') {
       let o; do { o = shuffle(step.items.map((_, k) => k)); } while (o.every((v, k) => v === k) && o.length > 1);
       U.order = o;
@@ -228,7 +231,7 @@
       case 'multi': return step.answer.map((i) => '• ' + esc(step.options[i])).join('<br>');
       case 'body': return step.answer.map((r) => REG[r]).join(', ');
       case 'text': return step.fields.map((f) => esc(f.show || f.accept[0])).join(' • ');
-      case 'match': return step.pairs.map((p) => `• ${esc(p.left)} ← <b>${esc(p.right)}</b>`).join('<br>');
+      case 'match': return step.pairs.map((p) => `• ${esc(p.left)}: <b>${esc(p.right)}</b>`).join('<br>');
       case 'sequence': return '<ol style="margin:4px 0;padding-inline-start:20px">' + step.items.map((t) => `<li>${esc(t)}</li>`).join('') + '</ol>';
     }
     return '';
@@ -256,13 +259,13 @@
     return h;
   }
 
-  const bChoice = (s) => s.options.map((o, k) => {
+  const bChoice = (s) => U.perm.map((k, pos) => {
     const bad = U.wrong.includes(k);
-    return `<button class="opt ${bad ? 'bad' : ''}" ${bad ? 'disabled' : ''} data-act="opt" data-i="${k}"><span class="mk">${HEB[k]}</span><span>${esc(o)}</span></button>`;
+    return `<button class="opt ${bad ? 'bad' : ''}" ${bad ? 'disabled' : ''} data-act="opt" data-i="${k}"><span class="mk">${HEB[pos]}</span><span>${esc(s.options[k])}</span></button>`;
   }).join('');
 
-  const bMulti = (s) => s.options.map((o, k) =>
-    `<button class="opt ${U.sel.includes(k) ? 'sel' : ''}" data-act="mtoggle" data-i="${k}"><span class="mk">${U.sel.includes(k) ? '✓' : ''}</span><span>${esc(o)}</span></button>`
+  const bMulti = (s) => U.perm.map((k) =>
+    `<button class="opt ${U.sel.includes(k) ? 'sel' : ''}" data-act="mtoggle" data-i="${k}"><span class="mk">${U.sel.includes(k) ? '✓' : ''}</span><span>${esc(s.options[k])}</span></button>`
   ).join('') + `<button class="btn block" data-act="mcheck" ${U.sel.length ? '' : 'disabled'}>בדקו תשובה</button>`;
 
   const bText = (s) => s.fields.map((f, k) =>
@@ -535,7 +538,7 @@
     let all = true;
     step.fields.forEach((f, k) => {
       if (U.tok[k] === true) return;
-      const ok = matchText(U.tval[k] || '', f.accept);
+      const ok = matchText(U.tval[k] || '', f.accept, f.reject);
       U.tok[k] = ok; if (!ok) all = false;
     });
     if (all) solved(); else wrong('חלק מהתשובות לא נכונות. התשובות הנכונות סומנו בירוק.');
