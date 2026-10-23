@@ -139,6 +139,7 @@
         <button class="btn block" data-act="start">🏥 מתחילים משמרת (השעון מתחיל לרוץ)</button>
         <p class="muted small" style="margin:10px 0 0">המשחק משתמש בסאונד. אפשר להשתיק בכל רגע מהכפתור למעלה.</p></div>`;
     }
+    h += `<p class="credit">פותח על ידי אורי עליון</p>`;
     return h;
   }
 
@@ -370,16 +371,28 @@
       <label class="muted small">שמות</label><input class="field" id="names" value="${esc(S.names)}" maxlength="60" autocomplete="off"></div>`;
     G.reflection.forEach((r) => {
       const v = S.refl[r.key] || '';
-      h += `<div class="card"><h3>${esc(r.label)}</h3><p>${esc(r.prompt)}</p>
+      h += `<div class="card" id="card-${r.key}"><h3>${esc(r.label)}</h3><p>${esc(r.prompt)}</p>
         <textarea class="field" data-r="${r.key}" placeholder="כתבו כאן…">${esc(v)}</textarea>
-        <div class="counter ${v.trim().length >= r.min ? 'good' : ''}" data-c="${r.key}">${v.trim().length} / ${r.min}</div></div>`;
+        <div class="counter ${v.trim().length >= r.min ? 'good' : ''}" data-c="${r.key}">${counterText(r, v.trim().length)}</div></div>`;
     });
-    h += `<div class="card"><h3>איך הייתה החוויה?</h3><div class="rate">${[1, 2, 3, 4, 5].map((n) => `<button data-act="rate" data-n="${n}" class="${S.rating === n ? 'on' : ''}">${n}</button>`).join('')}</div>
+    h += `<div class="card" id="card-rating"><h3>איך הייתה החוויה? <span class="muted small">(לא חובה)</span></h3><div class="rate">${[1, 2, 3, 4, 5].map((n) => `<button data-act="rate" data-n="${n}" class="${S.rating === n ? 'on' : ''}">${n}</button>`).join('')}</div>
       <div class="muted small" style="margin-top:6px">1 = לא עזר ללמוד · 5 = עזר מאוד</div></div>
-      <button class="btn block" id="mkreport" data-act="toReport" ${reflOk() ? '' : 'disabled'}>📄 צרו את הדוח</button>`;
+      <div class="missing" id="missing">${missingHTML()}</div>
+      <button class="btn block${reflOk() ? '' : ' dim'}" id="mkreport" data-act="toReport">📄 צרו את הדוח</button>`;
     return h;
   }
-  const reflOk = () => S.rating > 0 && G.reflection.every((r) => (S.refl[r.key] || '').trim().length >= r.min);
+  const counterText = (r, n) => r.min > 0 ? n + ' / ' + r.min : n + ' תווים';
+  const missingList = () => {
+    const m = G.reflection
+      .map((r) => ({ id: 'card-' + r.key, text: `${r.label}: עוד ${r.min - (S.refl[r.key] || '').trim().length} תווים`, short: (S.refl[r.key] || '').trim().length < r.min }))
+      .filter((x) => x.short);
+    return m;
+  };
+  const reflOk = () => missingList().length === 0;
+  const missingHTML = () => {
+    const m = missingList();
+    return m.length ? '<b>כדי ליצור את הדוח עוד חסר:</b><ul>' + m.map((x) => '<li>' + esc(x.text) + '</li>').join('') + '</ul>' : 'אפשר ליצור את הדוח בכל רגע. מה שכתבתם כאן יופיע בו, וזה מה שהמורה יבדוק.';
+  };
 
   /* ----- report ----- */
   function resultCode() {
@@ -394,17 +407,17 @@
       <div class="report"><h1>${esc(G.meta.title)}: דוח סיכום</h1>
       <div class="meta"><span><b>צוות:</b> ${esc(S.names || 'ללא שם')}</span><span><b>תאריך:</b> ${date}</span>
       <span><b>זמן סופי:</b> ${fmt(total())}</span><span><b>קנסות:</b> ${S.penalty} שניות</span></div>
-      <h2>סיכום תחנות</h2><table><tr><th>תחנה</th><th>אבחנה</th><th>הורמון מפתח</th><th>טיפול</th><th>טעויות</th><th>רמזים</th></tr>
-      ${G.stations.map((s) => `<tr><td>${esc(s.title)}</td><td>${esc(s.diagnosis)}</td><td>${esc(s.keyHormone)}</td><td>${esc(s.treatment)}</td><td>${S.mistakes[s.id] || 0}</td><td>${S.hintTotal[s.id] || 0}</td></tr>`).join('')}</table>`;
+      <h2>סיכום תחנות</h2><div class="tscroll"><table><tr><th>תחנה</th><th>אבחנה</th><th>הורמון מפתח</th><th>טיפול</th><th>טעויות</th><th>רמזים</th></tr>
+      ${G.stations.map((s) => `<tr><td>${esc(s.title)}</td><td>${esc(s.diagnosis)}</td><td>${esc(s.keyHormone)}</td><td>${esc(s.treatment)}</td><td>${S.mistakes[s.id] || 0}</td><td>${S.hintTotal[s.id] || 0}</td></tr>`).join('')}</table></div>`;
     G.reflection.forEach((r) => { h += `<h2>${esc(r.label)}</h2><p class="muted small" style="color:#475569">${esc(r.prompt)}</p><div class="ans">${esc(S.refl[r.key] || '')}</div>`; });
-    h += `<h2>דירוג החוויה</h2><p>${S.rating} מתוך 5</p><h2>קוד תוצאה (למורה)</h2><div class="code">${resultCode()}</div></div>`;
+    h += `<h2>דירוג החוויה</h2><p>${S.rating ? S.rating + ' מתוך 5' : 'לא דורג'}</p><h2>קוד תוצאה (למורה)</h2><div class="code">${resultCode()}</div><p class="credit" style="color:#64748b">פותח על ידי אורי עליון</p></div>`;
     return h;
   }
   function reportText() {
     const L = [`${G.meta.title}: דוח סיכום`, `צוות: ${S.names}`, `תאריך: ${new Date().toLocaleDateString('he-IL')}`, `זמן סופי: ${fmt(total())} (קנסות: ${S.penalty} שניות)`, '', 'תחנות:'];
     G.stations.forEach((s) => L.push(`- ${s.title}: ${s.diagnosis} | ${s.keyHormone} | ${s.treatment} | טעויות ${S.mistakes[s.id] || 0}, רמזים ${S.hintTotal[s.id] || 0}`));
     G.reflection.forEach((r) => { L.push('', r.label, r.prompt, S.refl[r.key] || ''); });
-    L.push('', `דירוג: ${S.rating}/5`, '', 'קוד תוצאה: ' + resultCode());
+    L.push('', `דירוג: ${S.rating ? S.rating + '/5' : 'לא דורג'}`, '', 'קוד תוצאה: ' + resultCode(), '', 'פותח על ידי אורי עליון');
     return L.join('\n');
   }
 
@@ -476,7 +489,14 @@
       case 'code': checkCode(); break;
       case 'toReflect': go('reflect'); break;
       case 'rate': S.rating = +t.dataset.n; save(); render(); break;
-      case 'toReport': if (reflOk()) go('report'); break;
+      case 'toReport': {
+        const m = missingList();
+        if (!m.length) { go('report'); break; }
+        const card = document.getElementById(m[0].id);
+        if (card) { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); card.classList.add('flash'); setTimeout(() => card.classList.remove('flash'), 1600); }
+        toast('עוד לא הכול מולא: ' + m[0].text, false);
+        break;
+      }
       case 'print': window.print(); break;
       case 'txt': download('endocrine-report.txt', reportText()); break;
       case 'copycode': copy(resultCode()); break;
@@ -489,8 +509,8 @@
     else if (t.dataset.r) {
       S.refl[t.dataset.r] = t.value; save();
       const r = G.reflection.find((x) => x.key === t.dataset.r), n = t.value.trim().length, c = $(`[data-c="${r.key}"]`);
-      c.textContent = n + ' / ' + r.min; c.classList.toggle('good', n >= r.min);
-      $('#mkreport').disabled = !reflOk();
+      c.textContent = counterText(r, n); c.classList.toggle('good', n >= r.min);
+      $('#missing').innerHTML = missingHTML(); $('#mkreport').classList.toggle('dim', !reflOk());
     } else if (t.id === 'names') { S.names = t.value; save(); }
   });
   document.addEventListener('change', (e) => { if (e.target.dataset.mi !== undefined) U.mval[+e.target.dataset.mi] = e.target.value; });

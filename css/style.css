@@ -239,3 +239,16 @@ select.field { margin: 0; }
 
 .banner .cards { gap: 5px; margin: 8px 0 0; }
 .banner .cards .keyslot { width: 30px; height: 36px; font-size: 1.1rem; }
+
+.credit { text-align: center; color: var(--muted); font-size: .85rem; margin: 26px 0 0; }
+
+.btn.dim { opacity: .6; }
+.missing { margin: 4px 0 12px; padding: 10px 14px; border-radius: 12px; background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.4); font-size: .95rem; }
+.missing ul { margin: 4px 0 0; padding-inline-start: 20px; }
+.card.flash { animation: flash 1.2s ease; }
+@keyframes flash { 0%, 60% { box-shadow: 0 0 0 3px var(--amber); } 100% { box-shadow: 0 10px 30px rgba(0,0,0,.28); } }
+
+.report { overflow-x: hidden; }
+.report .tscroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.report .tscroll table { min-width: 620px; }
+@media print { .report .tscroll { overflow: visible; } .report .tscroll table { min-width: 0; } }
