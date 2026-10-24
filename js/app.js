@@ -110,6 +110,15 @@
   }
   requestAnimationFrame(ecgLoop);
 
+  // האזנה לדופק: צפצוף בלופ עד שלוחצים שוב על הכפתור (או עוזבים את המסך)
+  let heartTimer = null;
+  function stopHeart() { if (heartTimer) { clearInterval(heartTimer); heartTimer = null; } }
+  function toggleHeart(hr) {
+    if (heartTimer) { stopHeart(); return; }
+    Sound.unlock(); Sound.heart(hr, 1);
+    heartTimer = setInterval(() => Sound.heart(hr, 1), 60000 / Math.max(30, hr));
+  }
+
   const bannerStyle = (key) => {
     const u = G.backgrounds && G.backgrounds[key];
     return u ? ` style="background-image:linear-gradient(rgba(10,17,32,.45),rgba(10,17,32,.92)),url('${esc(u)}')" ` : '';
@@ -125,7 +134,7 @@
     const toggle = $('#mute'); if (toggle) toggle.textContent = Sound.isMuted() ? '🔇' : '🔊';
   }
   const rise = () => U.animate ? ' rise' : '';
-  function go(screen) { S.screen = screen; U.animate = true; save(); render(); window.scrollTo(0, 0); }
+  function go(screen) { stopHeart(); S.screen = screen; U.animate = true; save(); render(); window.scrollTo(0, 0); }
 
   /* ----- intro ----- */
   function rIntro() {
@@ -183,12 +192,27 @@
   }
 
   const bubbleHTML = (m) => {
-    if (!m.who) return `<div class="sys${rise()}">${esc(m.text)}</div>`;
+    if (!m.who) return `<div class="sys${/^(🔬|🧪|🧲|🩻)/.test(m.text) ? ' lab' : ''}${rise()}">${esc(m.text)}</div>`;
     const c = G.chars[m.who];
     return `<div class="bubble-row${rise()}"><div class="avatar" style="background:${c.color}">${esc(c.initial)}</div>
       <div class="bubble"><div class="who">${esc(c.name)} · ${esc(c.role)}</div>${esc(m.text)}</div></div>`;
   };
-  const imgHTML = (im) => `<figure class="img"><img src="${esc(im.src)}" alt="${esc(im.caption)}" data-cap="${esc(im.caption)}" loading="lazy"><figcaption>${esc(im.caption)}</figcaption></figure>`;
+  // הודעות רצופות של אותה דמות מופיעות בבועה אחת
+  const storyHTML = (list) => {
+    const out = [];
+    (list || []).forEach((m) => {
+      const last = out[out.length - 1];
+      if (m.who && last && last.who === m.who) last.text += '<br><br>' + esc(m.text);
+      else out.push({ who: m.who, text: m.who ? esc(m.text) : m.text });
+    });
+    return out.map((m) => {
+      if (!m.who) return bubbleHTML(m);
+      const c = G.chars[m.who];
+      return `<div class="bubble-row${rise()}"><div class="avatar" style="background:${c.color}">${esc(c.initial)}</div>
+        <div class="bubble"><div class="who">${esc(c.name)} · ${esc(c.role)}</div>${m.text}</div></div>`;
+    }).join('');
+  };
+  const imgHTML = (im) => `<figure class="img"><img src="${esc(im.src)}" alt="תמונה קלינית" loading="lazy"></figure>`;
 
   function monitorHTML(v) {
     ecgHR = v.hr;
@@ -196,7 +220,7 @@
     return `<div class="monitor"><canvas id="ecg"></canvas><div class="vitals">
       <div${f('hr')}><b>${v.hr}</b><span>HR</span></div><div${f('bp')}><b>${esc(v.bp)}</b><span>BP</span></div>
       <div${f('spo2')}><b>${v.spo2}%</b><span>SpO₂</span></div><div${f('temp')}><b>${v.temp}°</b><span>TEMP</span></div></div>
-      <button class="listen" data-act="listen">🔊 להאזין לדופק</button></div>`;
+      <button class="listen" data-act="listen">${heartTimer ? '⏹️ הפסקת האזנה לדופק' : '🔊 להאזין לדופק'}</button></div>`;
   }
 
   function rStation() {
@@ -206,12 +230,14 @@
       <div class="muted small">${esc(st.room)}</div></div></div></div>
       <div class="patient-chip">🪪 ${esc(st.patient.tag)} · ${esc(st.patient.line)}</div><div style="height:12px"></div>`;
     h += monitorHTML(st.vitals);
-    h += st.story.map(bubbleHTML).join('');
+    h += storyHTML(st.story);
     if (st.images) h += st.images.map(imgHTML).join('');
-    for (let i = 0; i < Math.min(p + 1, n); i++) {
+    // אחרי פתרון, השלב הבא מוצג רק אחרי לחיצה על "המשיכו"
+    const waiting = U.justIdx != null;
+    for (let i = 0; i < Math.min(waiting ? p : p + 1, n); i++) {
       const step = st.steps[i];
       if (step.before) {
-        h += (step.before.story || []).map(bubbleHTML).join('');
+        h += storyHTML(step.before.story);
         h += (step.before.images || []).map(imgHTML).join('');
       }
       if (i < p) h += doneCard(st, i, step);
@@ -239,7 +265,7 @@
 
   function doneCard(st, i, step) {
     const fresh_ = U.justIdx === i, n = st.steps.length;
-    const explain = `<div class="explain"><b>מה למדנו:</b> ${esc(step.explain)}</div>`;
+    const explain = `<div class="explain"><b>💡 מה למדנו</b><div>${esc(step.explain)}</div></div>`;
     let h = `<div class="card step done${fresh_ ? ' rise' : ''}"><div class="num">✔ שלב ${i + 1} מתוך ${n}</div><div class="q">${esc(step.q)}</div>
       <div class="small"><b>התשובה:</b><br>${answerText(step)}</div>`;
     if (fresh_) {
@@ -309,7 +335,7 @@
   function hintArea(st, i, step) {
     const key = st.id + ':' + i, used = S.hints[key] || 0, hs = step.hints || [];
     if (!hs.length) return '';
-    let h = hs.slice(0, used).map((t, k) => `<div class="hintbox">📞 <b>פרופ׳ עלמה (רמז ${k + 1}):</b> ${esc(t)}</div>`).join('');
+    let h = used ? `<div class="hintbox">📞 <b>פרופ׳ עלמה:</b>${hs.slice(0, used).map((t, k) => `<div class="hl"><b>רמז ${k + 1}:</b> ${esc(t)}</div>`).join('')}</div>` : '';
     if (used < hs.length) {
       const pen = G.penalties.hint[Math.min(used, G.penalties.hint.length - 1)];
       h += `<button class="btn ghost warn-b" style="margin-top:10px" data-act="hint">📞 התקשרו לפרופ׳ עלמה: רמז ${used + 1}/${hs.length} (+${pen} שניות)</button>`;
@@ -347,7 +373,7 @@
       <input class="field code-input" id="code" maxlength="${G.exit.word.length + 4}" placeholder="${'_ '.repeat(G.exit.word.length).trim()}" autocomplete="off" autocapitalize="characters" spellcheck="false" ${U.doorOpen ? 'disabled' : ''}>
       ${U.msg ? `<div class="msg-bad">${esc(U.msg)}</div>` : ''}
       <button class="btn block" data-act="code" ${U.doorOpen ? 'disabled' : ''}>🔓 נסו לפתוח</button>`;
-    h += hs.slice(0, used).map((t, k) => `<div class="hintbox">📞 <b>רמז ${k + 1}:</b> ${esc(t)}</div>`).join('');
+    if (used) h += `<div class="hintbox">📞 <b>פרופ׳ עלמה:</b>${hs.slice(0, used).map((t, k) => `<div class="hl"><b>רמז ${k + 1}:</b> ${esc(t)}</div>`).join('')}</div>`;
     if (used < hs.length && !U.doorOpen) {
       const pen = G.penalties.hint[Math.min(used, 2)];
       h += `<button class="btn ghost" style="margin-top:10px" data-act="hint">📞 התקשרו לפרופ׳ עלמה: רמז ${used + 1}/${hs.length} (+${pen} שניות)</button>`;
@@ -441,7 +467,7 @@
       case 'back': U.justIdx = null; go('hub'); break;
       case 'toDoor': U = { animate: true }; go('door'); break;
       case 'reset': e.preventDefault(); if (confirm('למחוק את כל ההתקדמות ולהתחיל מחדש?')) { S = fresh(); U = { animate: true, introIdx: 0 }; save(); render(); } break;
-      case 'listen': Sound.unlock(); Sound.heart(stById(S.cur).vitals.hr, 4); break;
+      case 'listen': toggleHeart(stById(S.cur).vitals.hr); t.textContent = heartTimer ? '⏹️ הפסקת האזנה לדופק' : '🔊 להאזין לדופק'; break;
       case 'hint': {
         if (S.screen === 'door') {
           const used = S.hints.door || 0;
@@ -528,7 +554,7 @@
     if (im.tagName !== 'IMG') return;
     const d = document.createElement('div');
     d.className = 'ph';
-    d.innerHTML = `<div style="font-size:2.2rem">🖼️</div><div>${esc(im.dataset.cap || '')}<br><span class="small">(התמונה עוד לא הועלתה: ${esc(im.getAttribute('src'))})</span></div>`;
+    d.innerHTML = `<div style="font-size:2.2rem">🖼️</div><div><span class="small">(התמונה עוד לא הועלתה: ${esc(im.getAttribute('src'))})</span></div>`;
     im.replaceWith(d);
   }, true);
   $('#mute').addEventListener('click', () => { Sound.toggle(); $('#mute').textContent = Sound.isMuted() ? '🔇' : '🔊'; });

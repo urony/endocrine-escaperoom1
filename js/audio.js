@@ -44,7 +44,8 @@ const Sound = (() => {
     ok()   { tone(660, 0, .12, 'triangle'); tone(880, .1, .12, 'triangle'); tone(1320, .2, .22, 'triangle'); },
     bad()  { tone(180, 0, .25, 'sawtooth', .12, 90); },
     pager() { for (let i = 0; i < 3; i++) { tone(1800, i * .22, .1, 'square', .07); tone(1400, i * .22 + .1, .08, 'square', .07); } },
-    ring() { for (let i = 0; i < 2; i++) { tone(440, i * .5, .18, 'sine', .12); tone(480, i * .5, .18, 'sine', .12); tone(440, i * .5 + .22, .18, 'sine', .12); tone(480, i * .5 + .22, .18, 'sine', .12); } },
+    // צלצול רך של פעמון: שלושה צלילים עולים שדועכים לאט
+    ring() { tone(784, 0, .6, 'sine', .12); tone(1046, .14, .8, 'sine', .1); tone(1318, .28, 1.1, 'sine', .08); },
     key()  { tone(1046, 0, .1, 'triangle'); tone(1318, .09, .1, 'triangle'); tone(1568, .18, .1, 'triangle'); tone(2093, .27, .35, 'triangle'); },
     door() { tone(90, 0, .5, 'sawtooth', .12, 60); tone(220, .5, .9, 'square', .06, 440); this.key(); },
     // צפצופי מוניטור לפי דופק

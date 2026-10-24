@@ -26,13 +26,23 @@
       <h2>🏁 דירוג תלמידים</h2>
       <p class="muted small">כל תלמיד לוחץ "העתקת קוד תוצאה" בדוח וכותב לך את הקוד (ENDO-…). הדביקו כאן קוד אחד בכל שורה.</p>
       <textarea class="field" id="codes" placeholder="ENDO-eyJu…&#10;ENDO-eyJu…"></textarea>
+      <p class="muted small">הקודים נשמרים אוטומטית בדפדפן הזה בלבד (אצלך, ולא אצל מורים אחרים).</p>
       <div id="rank"></div>
+      <button class="btn ghost" id="dl" style="display:none">⬇️ הורדת טבלת הדירוג (CSV לאקסל)</button>
     </div>
 
     <div class="card">
       <h2>🗝️ מפתח תשובות</h2>
       <p class="muted small">מילת היציאה: <b id="word" style="direction:ltr;display:inline-block"></b></p>
       <div id="key"></div>
+    </div>
+
+    <div class="card">
+      <h2>🚪 הפתרון של הדלת החוצה</h2>
+      <p>המילה: <b id="word2" style="direction:ltr;display:inline-block"></b> (FEEDBACK = משוב: ההורמון האחרון בשרשרת משפיע חזרה על תחילתה, העיקרון שחוזר בכל התחנות).</p>
+      <p class="muted small">האותיות שמקבלים בכל תחנה (לפי סדר התחנות במשחק; הסדר הנכון של המילה אינו סדר ההשגה):</p>
+      <div id="letters"></div>
+      <p class="muted small" id="exitnote"></p>
     </div>
     <p class="credit">פותח על ידי אורי עליון</p>
   </main>
@@ -51,7 +61,7 @@
         case 'choice': return esc(s.options[s.answer]);
         case 'multi': return s.answer.map((i) => '• ' + esc(s.options[i])).join('<br>');
         case 'body': return s.answer.map((r) => REG[r]).join(', ');
-        case 'text': return s.fields.map((f) => esc(f.label) + ': ' + f.accept.slice(0, 4).map(esc).join(' / ')).join('<br>');
+        case 'text': return s.fields.map((f) => esc(f.label) + ': ' + (f.show ? esc(f.show) : f.accept.slice(0, 4).map(esc).join(' / '))).join('<br>');
         case 'match': return s.pairs.map((p) => '• ' + esc(p.left) + ': ' + esc(p.right)).join('<br>');
         case 'sequence': return s.items.map((t, i) => (i + 1) + '. ' + esc(t)).join('<br>');
       }
@@ -62,15 +72,36 @@
       <table class="t"><tr><th>#</th><th>שאלה</th><th>תשובה</th></tr>
       ${st.steps.map((s, i) => `<tr><td>${i + 1}</td><td>${esc(s.q)}</td><td class="ans">${answer(s)}</td></tr>`).join('')}</table></details>`).join('');
 
+    document.getElementById('word2').textContent = G.exit.word;
+    document.getElementById('letters').innerHTML = `<table class="t"><tr><th>תחנה</th><th>אות</th></tr>` +
+      G.stations.map((st) => `<tr><td>${st.icon} ${esc(st.title)} (${esc(st.diagnosis)})</td><td dir="ltr"><b>${esc(st.letter)}</b></td></tr>`).join('') + '</table>';
+    document.getElementById('exitnote').textContent = 'התלמידים מקלידים את כל האותיות בסדר הנכון בדלת הסופית. קנס על ניסיון שגוי: ' + G.penalties.door + ' שניות.';
+
     const box = document.getElementById('codes');
+    const KEY = 'endo-teacher-codes';
+    try { box.value = localStorage.getItem(KEY) || ''; } catch (e) {}
+    let lastRows = [];
     function render() {
+      try { localStorage.setItem(KEY, box.value); } catch (e) {}
       const rows = box.value.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => {
         try { return JSON.parse(decodeURIComponent(escape(atob(l.replace(/^ENDO-/, ''))))); } catch (e) { return null; }
       }).filter(Boolean).sort((a, b) => a.t - b.t);
+      lastRows = rows;
+      document.getElementById('dl').style.display = rows.length ? '' : 'none';
       document.getElementById('rank').innerHTML = rows.length ? `<table class="t"><tr><th>מקום</th><th>שם</th><th>זמן סופי</th><th>זמן משחק</th><th>קנסות</th><th>טעויות</th><th>רמזים</th><th>תחנות</th></tr>` +
         rows.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(r.n || '')}</td><td><b>${fmt(r.t)}</b></td><td>${fmt(r.e)}</td><td>${r.p}s</td><td>${r.w}</td><td>${r.h}</td><td>${r.s}/${G.stations.length}</td></tr>`).join('') + '</table>' : '';
     }
     box.addEventListener('input', render);
+    render();
+    document.getElementById('dl').addEventListener('click', () => {
+      const q = (v) => '"' + String(v).replace(/"/g, '""') + '"';
+      const head = ['מקום', 'שם', 'זמן סופי', 'זמן משחק', 'קנסות (שניות)', 'טעויות', 'רמזים', 'תחנות שהושלמו'];
+      const lines = [head.map(q).join(',')].concat(lastRows.map((r, i) => [i + 1, r.n || '', fmt(r.t), fmt(r.e), r.p, r.w, r.h, r.s + '/' + G.stations.length].map(q).join(',')));
+      const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = 'דירוג-חדר-בריחה.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+    });
   </script>
 </body>
 </html>
