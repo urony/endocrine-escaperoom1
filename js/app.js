@@ -138,17 +138,14 @@
 
   /* ----- intro ----- */
   function rIntro() {
-    const i = U.introIdx || 0, msgs = G.intro;
+    const msgs = G.intro;
     let h = `<div class="pager"><div class="logo">📟</div><h1>${esc(G.meta.title)}</h1><p class="muted">${esc(G.meta.subtitle)}</p></div>`;
-    h += msgs.slice(0, i + 1).map((m, k) => `<div class="msg${k === i ? ' rise' : ''}">${esc(m.text)}</div>`).join('');
-    if (i < msgs.length - 1) {
-      h += `<button class="btn block" data-act="introNext">הבא ▸</button>`;
-    } else {
-      h += `<div class="card" style="margin-top:14px"><h3>מי התורנים הלילה?</h3>
+    // כל הודעת הפתיחה של פרופ׳ עלמה מוצגת ברצף, בבלוק אחד
+    h += `<div class="msg">${msgs.map((m, k) => k === 0 ? `<b>${esc(m.text)}</b>` : esc(m.text)).join('<br><br>')}</div>`;
+    h += `<div class="card" style="margin-top:14px"><h3>מי התורנים הלילה?</h3>
         <input class="field" id="names" placeholder="שם או שני שמות" value="${esc(S.names)}" maxlength="60" autocomplete="off">
         <button class="btn block" data-act="start">🏥 מתחילים משמרת (השעון מתחיל לרוץ)</button>
         <p class="muted small" style="margin:10px 0 0">המשחק משתמש בסאונד. אפשר להשתיק בכל רגע מהכפתור למעלה.</p></div>`;
-    }
     h += `<p class="credit">פותח על ידי אורי עליון</p>`;
     return h;
   }
@@ -169,7 +166,8 @@
     const all = d === n;
     h += `<div class="node ${all ? 'open' : 'locked'}"><div class="rail"><div class="dot">${all ? '🚪' : '🔒'}</div></div>
       <button class="body" ${all ? 'data-act="toDoor"' : 'disabled'}><div class="t">הדלת החוצה</div><div class="s">${all ? 'כל האותות אצלכם. אפשר לפתוח.' : 'דורשת את כל כרטיסי הגישה'}</div></button></div></div>
-      <p class="center muted small" style="text-align:center"><a href="#" data-act="reset" style="color:inherit">התחלה מחדש (מוחק את ההתקדמות)</a></p>`;
+      <div style="text-align:center;margin-top:18px"><button class="btn ghost" data-act="reset">🗑️ מחיקה והתחלה מחדש</button>
+      <p class="muted small" style="margin:6px 0 0">מוחק את כל ההתקדמות והכתיבה בדפדפן הזה.</p></div>`;
     return h;
   }
 
@@ -391,12 +389,13 @@
       <div><span class="muted small">קנסות</span><b>${S.penalty}s</b></div>
       <div><span class="muted small">טעויות / רמזים</span><b>${mist} / ${hnt}</b></div></div>
       <p>הראו למורה את הזמן הסופי. עכשיו נשארה משימה אחרונה: סיכום ורפלקציה, שיוצאים ממנו כדוח.</p>
-      <button class="btn block" data-act="toReflect">📝 לסיכום והרפלקציה</button></div>`;
+      <button class="btn block" data-act="toReflect">📝 לסיכום והרפלקציה</button>
+      <button class="btn ghost block" data-act="back" style="margin-top:8px">▸ חזרה למפה</button></div>`;
   }
 
   /* ----- reflection ----- */
   function rReflect() {
-    let h = `<div class="card"><h2>📝 סיכום ורפלקציה</h2><p class="muted">כתבו בעצמכם, במילים שלכם. הכתיבה הזאת היא חלק מהלמידה, והיא תהפוך לדוח שתגישו למורה.</p>
+    let h = `<button class="btn ghost" data-act="back" style="margin-bottom:12px">▸ חזרה למפה</button><div class="card"><h2>📝 סיכום ורפלקציה</h2><p class="muted">כתבו בעצמכם, במילים שלכם. הכתיבה הזאת היא חלק מהלמידה, והיא תהפוך לדוח שתגישו למורה.</p>
       <label class="muted small">שמות</label><input class="field" id="names" value="${esc(S.names)}" maxlength="60" autocomplete="off"></div>`;
     G.reflection.forEach((r) => {
       const v = S.refl[r.key] || '';
@@ -432,7 +431,7 @@
     const date = new Date().toLocaleDateString('he-IL');
     let h = `<div class="noprint card"><p>הדוח מוכן. לחצו על "שמירה כ־PDF", ובחלון ההדפסה בחרו <b>"שמירה כ־PDF"</b> כיעד. אפשר גם להוריד טקסט, ולהגיש את הקובץ למורה.</p>
       <div class="row"><button class="btn" data-act="print">🖨️ שמירה כ־PDF / הדפסה</button><button class="btn ghost" data-act="txt">⬇️ הורדת טקסט</button>
-      <button class="btn ghost" data-act="copycode">📋 העתקת קוד תוצאה</button><button class="btn ghost" data-act="toReflect">✏️ חזרה לעריכה</button></div></div>
+      <button class="btn ghost" data-act="copycode">📋 העתקת קוד תוצאה</button><button class="btn ghost" data-act="toReflect">✏️ חזרה לעריכה</button><button class="btn ghost" data-act="back">▸ חזרה למפה</button></div></div>
       <div class="report"><h1>${esc(G.meta.title)}: דוח סיכום</h1>
       <div class="meta"><span><b>צוות:</b> ${esc(S.names || 'ללא שם')}</span><span><b>תאריך:</b> ${date}</span>
       <span><b>זמן סופי:</b> ${fmt(total())}</span><span><b>קנסות:</b> ${S.penalty} שניות</span></div>
@@ -466,7 +465,7 @@
       case 'open': Sound.unlock(); openStation(t.dataset.id); break;
       case 'back': U.justIdx = null; go('hub'); break;
       case 'toDoor': U = { animate: true }; go('door'); break;
-      case 'reset': e.preventDefault(); if (confirm('למחוק את כל ההתקדמות ולהתחיל מחדש?')) { S = fresh(); U = { animate: true, introIdx: 0 }; save(); render(); } break;
+      case 'reset': e.preventDefault(); if (confirm('למחוק את כל ההתקדמות, התשובות והסיכום שכתבתם, ולהתחיל מחדש? אי אפשר לשחזר.')) { S = fresh(); U = { animate: true, introIdx: 0 }; save(); render(); } break;
       case 'listen': toggleHeart(stById(S.cur).vitals.hr); t.textContent = heartTimer ? '⏹️ הפסקת האזנה לדופק' : '🔊 להאזין לדופק'; break;
       case 'hint': {
         if (S.screen === 'door') {

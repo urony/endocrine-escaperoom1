@@ -181,7 +181,7 @@ select.field { margin: 0; }
 .msg-bad { color: var(--red); font-weight: 600; margin: 8px 0 0; }
 .explain { margin-top: 14px; padding: 16px 18px; border-radius: 14px; background: #f8fafc; color: #111827; border: 3px solid #34d399; box-shadow: 0 0 0 3px rgba(52,211,153,.2), 0 8px 24px rgba(0,0,0,.35); font-size: 1.05rem; line-height: 1.65; }
 .explain b { display: block; margin-bottom: 6px; font-size: 1.15rem; color: #111827; }
-.sys.lab { background: rgba(34,211,238,.2); border: 2px solid #22d3ee; padding: 14px 16px; font-weight: 700; font-size: 1.05rem; line-height: 1.6; box-shadow: 0 0 18px rgba(34,211,238,.3); }
+.sys.lab { background: rgba(34,211,238,.22); border: 3px solid #22d3ee; padding: 18px 20px; font-weight: 800; font-size: 1.35rem; line-height: 1.6; box-shadow: 0 0 18px rgba(34,211,238,.3); }
 .hintbox .hl { margin-top: 6px; }
 .hintbox { margin-top: 10px; padding: 10px 14px; border-radius: 12px; background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.4); font-size: .95rem; }
 .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 60; padding: 10px 18px; border-radius: 999px; font-weight: 700; background: #7f1d1d; color: #fecaca; box-shadow: 0 10px 30px rgba(0,0,0,.4); animation: rise .25s ease both; }
